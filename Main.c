@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include "Map.h"
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 840
+#define SCREEN_HEIGHT 840
 
 
 int main(int argc, char *argv[])
@@ -20,13 +21,14 @@ int main(int argc, char *argv[])
     }
   // Créer la fenêtre
   fenetre = SDL_CreateWindow("Fenetre SDL", SDL_WINDOWPOS_CENTERED,
-			     SDL_WINDOWPOS_CENTERED,SCREEN_WIDTH ,SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
+			     SDL_WINDOWPOS_CENTERED,SCREEN_WIDTH ,SCREEN_HEIGHT, 0);
   if(fenetre == NULL) // En cas d’erreur
     {
       printf("Erreur de la creation d’une fenetre: %s",SDL_GetError());
       SDL_Quit();
       return EXIT_FAILURE;
     }
+  afficher_map(fenetre);
   // Boucle principale
   while(!terminer)
     {
@@ -44,7 +46,6 @@ int main(int argc, char *argv[])
 	      }
 	  }
     }
-  // Quitter SDL
   SDL_DestroyWindow(fenetre);
   SDL_Quit();
   return 0;

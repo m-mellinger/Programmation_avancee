@@ -1,6 +1,7 @@
 #include <SDL2/SDL.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "Map.h"
 
 #define WINDOW_W 840
 #define WINDOW_H 840
@@ -85,15 +86,14 @@ int conv_char_en_entier(char s){
   return retour;
 }
 
-void afficher_map(){
-SDL_Window* fenetre;
+void afficher_map(SDL_Window* fenetre){
+  
   SDL_Renderer* renderer;
   SDL_Texture *bitmapTex;
   SDL_Surface *bitmapSurface;
   SDL_Rect SrcR,DestR;
   char** tab;
   
-  fenetre = SDL_CreateWindow("Une fenetre SDL" , SDL_WINDOWPOS_CENTERED , SDL_WINDOWPOS_CENTERED , WINDOW_W , WINDOW_H , 0);
    renderer = SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
    bitmapSurface = SDL_LoadBMP("pavage.bmp");   
    bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
@@ -116,16 +116,8 @@ SDL_Window* fenetre;
        SDL_RenderCopy(renderer, bitmapTex,&SrcR,&DestR);
      }
    }
-     SDL_RenderPresent(renderer);
-  SDL_Delay(10000);
+   SDL_RenderPresent(renderer);
+
 }
 
 
-int main(int argc, char *argv[])
-{
-  afficher_map();
-  printf("nombre de ligne %i \n",nb_ligne("Map.txt"));
-  printf("nombre de colonne %i \n",nb_colonne("Map.txt"));
-   
-  return 0;
-}
