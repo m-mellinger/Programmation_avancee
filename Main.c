@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "Map.h"
+#include "Affichage.h"
 
 #define SCREEN_WIDTH 840
 #define SCREEN_HEIGHT 840
@@ -13,6 +13,12 @@ int main(int argc, char *argv[])
   SDL_Window* fenetre; // Déclaration de la fenêtre
   SDL_Event evenements; // Événements liés à la fenêtre
   bool terminer = false;
+
+  SDL_Renderer* renderer;
+  SDL_Texture *bitmapTex;
+  SDL_Surface *bitmapSurface;
+
+  
   if(SDL_Init(SDL_INIT_VIDEO) < 0) // Initialisation de la SDL
     {
       printf("Erreur d’initialisation de la SDL: %s",SDL_GetError());
@@ -28,8 +34,8 @@ int main(int argc, char *argv[])
       SDL_Quit();
       return EXIT_FAILURE;
     }
-  afficher_map(fenetre);
-  // Boucle principale
+
+  afficher_jeu(fenetre);
   while(!terminer)
     {
       while( SDL_PollEvent( &evenements ) )
@@ -41,7 +47,12 @@ int main(int argc, char *argv[])
 	    switch(evenements.key.keysym.sym)
 	      {
 	      case SDLK_ESCAPE:
+	      case SDLK_z:
+	      case SDLK_s:
 	      case SDLK_q:
+	      case SDLK_d:
+
+	      case SDLK_a:
 		terminer = true; break;
 	      }
 	  }
