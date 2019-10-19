@@ -47,21 +47,26 @@ int nb_colonne(const char* nomFichier){
 
 
 void deplacerHaut(world_t *world){
-   SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
+  SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
   int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
   char caractere;
   world->positionY = world->positionY-1;
   SDL_RWseek(fichier,0,RW_SEEK_SET);
-  SDL_RWseek(fichier,world->positionX + (c+1)*world->positionY,RW_SEEK_CUR);
-  
-  for(int i = 0;i<21;i++){
+   SDL_RWseek(fichier,(c+1)*(world->positionY),RW_SEEK_CUR);
+  for(int i = 20;i>=0;i = i-1){
+    if (i>=1){
      for(int j = 0;j<21;j++){
-	SDL_RWread(fichier,&caractere,1,1);
-	world->tab[j][i] = caractere;  
+       world->tab[j][i] = world->tab[j][i-1];
      }
-    SDL_RWseek(fichier,c-20,RW_SEEK_CUR);
+    }
+    else{
+      for(int j = 0;j<21;j++){
+       SDL_RWread(fichier,&caractere,1,1);
+       world->tab[j][i] = caractere;
+     }
+    }
    }
-  SDL_RWclose(fichier);
+   SDL_RWclose(fichier);
 }
 
 void deplacerGauche(world_t *world){
@@ -70,14 +75,18 @@ void deplacerGauche(world_t *world){
   char caractere;
   world->positionX = world->positionX-1;
   SDL_RWseek(fichier,0,RW_SEEK_SET);
-  SDL_RWseek(fichier,world->positionX + (c+1)*world->positionY,RW_SEEK_CUR);
-  
+  SDL_RWseek(fichier,world->positionX+(c+1)*(world->positionY),RW_SEEK_CUR);
   for(int i = 0;i<21;i++){
-     for(int j = 0;j<21;j++){
-	SDL_RWread(fichier,&caractere,1,1);
-	world->tab[j][i] = caractere;  
+     for(int j = 20;j>=0;j = j-1){
+       if (j>=1){
+	 world->tab[j][i] = world->tab[j-1][i];
+       }
+       else{
+	 SDL_RWread(fichier,&caractere,1,1);
+	 world->tab[j][i] = caractere;
+	 SDL_RWseek(fichier,c,RW_SEEK_CUR);
+       }      
      }
-    SDL_RWseek(fichier,c-20,RW_SEEK_CUR);
    }
   SDL_RWclose(fichier);
 }
@@ -169,7 +178,7 @@ void afficher_jeu(world_t *world){
     for(int j = 0;j<22;j++){
       
       SrcR.x = 32*conv_char_en_entier(world->tab[i][j]);
-      SrcR.y = 32*conv_char_en_entier(world->tab[i][j]);
+      SrcR.y = 0;
       SrcR.w = 32; 
       SrcR.h = 32;
       
