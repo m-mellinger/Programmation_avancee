@@ -7,35 +7,14 @@
 #define SCREEN_WIDTH 840
 #define SCREEN_HEIGHT 840
 
-
 int main(int argc, char *argv[])
 {
-  SDL_Window* fenetre; // Déclaration de la fenêtre
+  world_t world;
   SDL_Event evenements; // Événements liés à la fenêtre
   bool terminer = false;
-
-  SDL_Renderer* renderer;
-  SDL_Texture *bitmapTex;
-  SDL_Surface *bitmapSurface;
-
   
-  if(SDL_Init(SDL_INIT_VIDEO) < 0) // Initialisation de la SDL
-    {
-      printf("Erreur d’initialisation de la SDL: %s",SDL_GetError());
-      SDL_Quit();
-      return EXIT_FAILURE;
-    }
-  // Créer la fenêtre
-  fenetre = SDL_CreateWindow("Fenetre SDL", SDL_WINDOWPOS_CENTERED,
-			     SDL_WINDOWPOS_CENTERED,SCREEN_WIDTH ,SCREEN_HEIGHT, 0);
-  if(fenetre == NULL) // En cas d’erreur
-    {
-      printf("Erreur de la creation d’une fenetre: %s",SDL_GetError());
-      SDL_Quit();
-      return EXIT_FAILURE;
-    }
-
-  afficher_jeu(fenetre);
+  init_data(&world);
+  afficher_jeu(&world);
   while(!terminer)
     {
       while( SDL_PollEvent( &evenements ) )
@@ -48,16 +27,36 @@ int main(int argc, char *argv[])
 	      {
 	      case SDLK_ESCAPE:
 	      case SDLK_z:
+		if (world.positionY > 0){
+		  deplacerHaut(&world);
+		  afficher_jeu(&world);
+		}
+		break;
 	      case SDLK_s:
+		if (world.positionY <nb_ligne("Map.txt")-10){
+		  deplacerBas(&world);
+		  afficher_jeu(&world);
+		}
+		break;
 	      case SDLK_q:
+		if (world.positionX > 0){
+		  deplacerGauche(&world);
+		  afficher_jeu(&world);
+		}
+		break;
 	      case SDLK_d:
+		if (world.positionX <nb_colonne("Map.txt")-10){
+		  deplacerDroite(&world);
+		  afficher_jeu(&world);
+		}
+		break;
 
 	      case SDLK_a:
 		terminer = true; break;
 	      }
 	  }
     }
-  SDL_DestroyWindow(fenetre);
+  SDL_DestroyWindow(world.fenetre);
   SDL_Quit();
   return 0;
 }

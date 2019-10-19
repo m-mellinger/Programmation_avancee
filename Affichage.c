@@ -28,7 +28,7 @@ int nb_ligne(const char* nomFichier){
 
 int nb_colonne(const char* nomFichier){
   
-  SDL_RWops* fichier = SDL_RWFromFile(nomFichier,"r");
+  SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
   int taille_fichier = 0, nb_colonne = -1;
   char caractere;
   
@@ -45,33 +45,104 @@ int nb_colonne(const char* nomFichier){
   return nb_colonne;
 }
 
-char** tab_map(const char* nomFichier){
-  
-  SDL_RWops* fichier = SDL_RWFromFile(nomFichier,"r");
-  int taille_fichier = 0,c = nb_colonne(nomFichier),l = nb_ligne(nomFichier) ;
+
+void deplacerHaut(world_t *world){
+   SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
+  int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
   char caractere;
-  char** tab;
-  
-  tab = malloc(sizeof(c));
-  for(int i = 0;i<c;i++)
-    tab[i] = malloc(sizeof(l));
-  
-  taille_fichier = SDL_RWseek(fichier,0,RW_SEEK_END);
+  world->positionY = world->positionY-1;
   SDL_RWseek(fichier,0,RW_SEEK_SET);
-    
-  for(int i = 0;i<l;i++){
-    for(int j = 0;j<c;j++){
-      SDL_RWseek(fichier,0,RW_SEEK_CUR);
-      SDL_RWread(fichier,&caractere,1,1);
-      if (caractere != '\n')
-	tab[j][i] = caractere;
-      else
-	j = j-1;
+  SDL_RWseek(fichier,world->positionX + (c+1)*world->positionY,RW_SEEK_CUR);
+  
+  for(int i = 0;i<21;i++){
+     for(int j = 0;j<21;j++){
+	SDL_RWread(fichier,&caractere,1,1);
+	world->tab[j][i] = caractere;  
+     }
+    SDL_RWseek(fichier,c-20,RW_SEEK_CUR);
+   }
+  SDL_RWclose(fichier);
+}
+
+void deplacerGauche(world_t *world){
+   SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
+  int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
+  char caractere;
+  world->positionX = world->positionX-1;
+  SDL_RWseek(fichier,0,RW_SEEK_SET);
+  SDL_RWseek(fichier,world->positionX + (c+1)*world->positionY,RW_SEEK_CUR);
+  
+  for(int i = 0;i<21;i++){
+     for(int j = 0;j<21;j++){
+	SDL_RWread(fichier,&caractere,1,1);
+	world->tab[j][i] = caractere;  
+     }
+    SDL_RWseek(fichier,c-20,RW_SEEK_CUR);
+   }
+  SDL_RWclose(fichier);
+}
+
+void deplacerBas(world_t *world){
+  SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
+  int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
+  char caractere;
+  SDL_RWseek(fichier,0,RW_SEEK_SET);
+  SDL_RWseek(fichier,world->positionX + (c+1)*(world->positionY+21),RW_SEEK_CUR);
+  for(int i = 0;i<21;i++){
+    if (i<20){
+     for(int j = 0;j<21;j++){
+       world->tab[j][i] = world->tab[j][i+1];
+     }
+    }
+    else{
+      for(int j = 0;j<21;j++){
+       SDL_RWread(fichier,&caractere,1,1);
+       world->tab[j][i] = caractere;
+     }
+    }
+   }
+   SDL_RWclose(fichier);
+   world->positionY = world->positionY+1;
+}
+void deplacerDroite(world_t *world){
+  SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
+  int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
+  char caractere;
+  SDL_RWseek(fichier,0,RW_SEEK_SET);
+  for(int i = 0;i<21;i++){
+     for(int j = 0;j<21;j++){
+       if (j<20){
+	 world->tab[j][i] = world->tab[j+1][i];
+       }
+       else{
+	 SDL_RWread(fichier,&caractere,1,1);
+	 world->tab[j][i] = caractere;
+	 SDL_RWseek(fichier,0,RW_SEEK_CUR);
+       } 
      }
    }
-   
-   return tab;		      
+   SDL_RWclose(fichier);
+   world->positionX = world->positionX+1;
 }
+
+void init_tab_map(const char* nomFichier,world_t *world){
+  
+  SDL_RWops* fichier = SDL_RWFromFile(nomFichier,"r");
+  int taille_fichier = 0,c = nb_colonne(nomFichier),l = nb_ligne(nomFichier);
+  char caractere;
+  SDL_RWseek(fichier,0,RW_SEEK_SET);
+  SDL_RWseek(fichier,world->positionX + (c+1)*world->positionY,RW_SEEK_CUR);
+  
+  for(int i = 0;i<21;i++){
+     for(int j = 0;j<21;j++){
+	SDL_RWread(fichier,&caractere,1,1);
+	world->tab[j][i] = caractere;  
+     }
+    SDL_RWseek(fichier,c-20,RW_SEEK_CUR);
+   }
+  SDL_RWclose(fichier);
+}
+
 
 int conv_char_en_entier(char s){
   int retour;
@@ -86,57 +157,50 @@ int conv_char_en_entier(char s){
   return retour;
 }
 
-void afficher_jeu(SDL_Window* fenetre){
-  
-  SDL_Renderer* renderer;
+void afficher_jeu(world_t *world){
   SDL_Texture *bitmapTex;
   SDL_Surface *bitmapSurface;
   SDL_Rect SrcR,DestR,SrcR2,DestR2;;
-  char** tab;
-  
-   renderer= SDL_CreateRenderer(fenetre, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-   bitmapSurface = SDL_LoadBMP("pavage.bmp");   
-   bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
-   SDL_FreeSurface(bitmapSurface);
 
-   tab = tab_map("Map.txt");
-   for(int i = 0;i<nb_colonne("Map.txt");i++){
-     for(int j = 0;j<nb_ligne("Map.txt");j++){
+  bitmapSurface = SDL_LoadBMP("pavage.bmp");   
+  bitmapTex = SDL_CreateTextureFromSurface(world->renderer, bitmapSurface);
+  SDL_FreeSurface(bitmapSurface);
+   for(int i = 0;i<22;i++){
+    for(int j = 0;j<22;j++){
+      
+      SrcR.x = 32*conv_char_en_entier(world->tab[i][j]);
+      SrcR.y = 32*conv_char_en_entier(world->tab[i][j]);
+      SrcR.w = 32; 
+      SrcR.h = 32;
+      
+      DestR.x = 40*i;
+      DestR.y = 40*j;
+      DestR.w = 40;
+      DestR.h = 40;
+      
+      SDL_RenderCopy(world->renderer, bitmapTex,&SrcR,&DestR);
+    }
+  }
   
-       SrcR.x = 40*conv_char_en_entier(tab[i][j]);
-       SrcR.y = 40*conv_char_en_entier(tab[i][j]);
-       SrcR.w = 40; 
-       SrcR.h = 40;
-       
-       DestR.x = 40*i;
-       DestR.y = 40*j;
-       DestR.w = 40;
-       DestR.h = 40;
-	 	 
-       SDL_RenderCopy(renderer, bitmapTex,&SrcR,&DestR);
-     }
-   }
-   
-   bitmapSurface = SDL_LoadBMP("sprites.bmp");
-   Uint32 colorkey = SDL_MapRGB( bitmapSurface->format, 0, 255, 255 );
-   SDL_SetColorKey(bitmapSurface,1,colorkey);
-   
-   bitmapTex = SDL_CreateTextureFromSurface(renderer, bitmapSurface);
-   SDL_FreeSurface(bitmapSurface);
-   
-   SrcR2.x = 0;
-   SrcR2.y = 0;
-   SrcR2.w = 250/3;
-   SrcR2.h = 330/3; 
-   
-   DestR2.x = WINDOW_W/2-20; 
-   DestR2.y = WINDOW_H/2-60;
-   DestR2.w = 40;
-   DestR2.h = 80;
- 
-   SDL_RenderCopy(renderer, bitmapTex,&SrcR2,&DestR2);
-   SDL_RenderPresent(renderer);
-
+  bitmapSurface = SDL_LoadBMP("sprites.bmp");
+  Uint32 colorkey = SDL_MapRGB( bitmapSurface->format, 0, 255, 255 );
+  SDL_SetColorKey(bitmapSurface,1,colorkey);
+  
+  bitmapTex = SDL_CreateTextureFromSurface(world->renderer, bitmapSurface);
+  SDL_FreeSurface(bitmapSurface);
+  
+  SrcR2.x = 0;
+  SrcR2.y = 0;
+  SrcR2.w = 250/3;
+  SrcR2.h = 330/3; 
+  
+  DestR2.x = WINDOW_W/2-20; 
+  DestR2.y = WINDOW_H/2-60;
+  DestR2.w = 40;
+  DestR2.h = 80;
+  
+  SDL_RenderCopy(world->renderer, bitmapTex,&SrcR2,&DestR2);
+  SDL_RenderPresent(world->renderer);
 }
 
 
