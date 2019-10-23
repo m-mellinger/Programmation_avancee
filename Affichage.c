@@ -53,20 +53,21 @@ void deplacerHaut(world_t *world){
   world->positionY = world->positionY-1;
   SDL_RWseek(fichier,0,RW_SEEK_SET);
    SDL_RWseek(fichier,world->positionX+(c+1)*(world->positionY),RW_SEEK_CUR);
-  for(int i = 20;i>=0;i = i-1){
+   /*for(int i = 20;i>=0;i = i-1){
     if (i>=1){
      for(int j = 0;j<21;j++){
        world->tab[j][i] = world->tab[j][i-1];
      }
     }
     else{
-      for(int j = 0;j<21;j++){
-       SDL_RWread(fichier,&caractere,6,6);
+    for(int j = 0;j<21;j++){*/
+
+       SDL_RWread(fichier,&caractere,24,1);
        printf("%c",caractere);
-       world->tab[j][i] = caractere;
-     }
-    }
-   }
+       //world->tab[j][i] = caractere;
+       //}
+       //}
+       //}
    SDL_RWclose(fichier);
 }
 
