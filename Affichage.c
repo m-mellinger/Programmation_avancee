@@ -6,6 +6,7 @@
 #define WINDOW_W 840
 #define WINDOW_H 840
 
+//test
 int nb_ligne(world_t *world){
   
   SDL_RWops* fichier = SDL_RWFromFile(world->fichier,"r");
