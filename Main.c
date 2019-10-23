@@ -4,9 +4,6 @@
 #include <stdbool.h>
 #include "Affichage.h"
 
-#define SCREEN_WIDTH 840
-#define SCREEN_HEIGHT 840
-
 int main(int argc, char *argv[])
 {
   world_t world;
@@ -27,25 +24,25 @@ int main(int argc, char *argv[])
 	      {
 	      case SDLK_ESCAPE:
 	      case SDLK_z:
-		if (world.positionY > 0){
+		if ( world.tab[world.positionPersoX][world.positionPersoY-1] != '1'){
 		  deplacerHaut(&world);
 		  afficher_jeu(&world);
 		}
 		break;
 	      case SDLK_s:
-		if (world.positionY <nb_ligne("Map.txt")-10){
+		if ( world.tab[world.positionPersoX][world.positionPersoY+1] != '1'){
 		  deplacerBas(&world);
 		  afficher_jeu(&world);
 		}
 		break;
 	      case SDLK_q:
-		if (world.positionX > 0){
+		if (world.tab[world.positionPersoX-1][world.positionPersoY] != '1'){
 		  deplacerGauche(&world);
 		  afficher_jeu(&world);
 		}
 		break;
 	      case SDLK_d:
-		if (world.positionX <nb_colonne("Map.txt")-10){
+		if ( world.tab[world.positionPersoX+1][world.positionPersoY] != '1'){
 		  deplacerDroite(&world);
 		  afficher_jeu(&world);
 		}
@@ -58,5 +55,6 @@ int main(int argc, char *argv[])
     }
   SDL_DestroyWindow(world.fenetre);
   SDL_Quit();
+
   return 0;
 }

@@ -6,9 +6,9 @@
 #define WINDOW_W 840
 #define WINDOW_H 840
 
-int nb_ligne(const char* nomFichier){
+int nb_ligne(world_t *world){
   
-  SDL_RWops* fichier = SDL_RWFromFile(nomFichier,"r");
+  SDL_RWops* fichier = SDL_RWFromFile(world->fichier,"r");
   int taille_fichier = 0, nb_ligne = 0;
   char caractere;
   
@@ -26,9 +26,9 @@ int nb_ligne(const char* nomFichier){
   return nb_ligne;
 }
 
-int nb_colonne(const char* nomFichier){
+int nb_colonne(world_t *world){
   
-  SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
+  SDL_RWops* fichier = SDL_RWFromFile(world->fichier,"r");
   int taille_fichier = 0, nb_colonne = -1;
   char caractere;
   
@@ -47,12 +47,12 @@ int nb_colonne(const char* nomFichier){
 
 
 void deplacerHaut(world_t *world){
-  SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
-  int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
+  SDL_RWops* fichier = SDL_RWFromFile(world->fichier,"r");
+  int taille_fichier = 0,c = nb_colonne(world),l = nb_ligne(world);
   char caractere;
   world->positionY = world->positionY-1;
   SDL_RWseek(fichier,0,RW_SEEK_SET);
-   SDL_RWseek(fichier,(c+1)*(world->positionY),RW_SEEK_CUR);
+   SDL_RWseek(fichier,world->positionX+(c+1)*(world->positionY),RW_SEEK_CUR);
   for(int i = 20;i>=0;i = i-1){
     if (i>=1){
      for(int j = 0;j<21;j++){
@@ -70,8 +70,8 @@ void deplacerHaut(world_t *world){
 }
 
 void deplacerGauche(world_t *world){
-   SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
-  int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
+   SDL_RWops* fichier = SDL_RWFromFile(world->fichier,"r");
+  int taille_fichier = 0,c = nb_colonne(world),l = nb_ligne(world);
   char caractere;
   world->positionX = world->positionX-1;
   SDL_RWseek(fichier,0,RW_SEEK_SET);
@@ -92,11 +92,12 @@ void deplacerGauche(world_t *world){
 }
 
 void deplacerBas(world_t *world){
-  SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
-  int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
+  SDL_RWops* fichier = SDL_RWFromFile(world->fichier,"r");
+  int taille_fichier = 0,c = nb_colonne(world),l = nb_ligne(world);
   char caractere;
+  world->positionY = world->positionY+1;
   SDL_RWseek(fichier,0,RW_SEEK_SET);
-  SDL_RWseek(fichier,world->positionX + (c+1)*(world->positionY+21),RW_SEEK_CUR);
+  SDL_RWseek(fichier,world->positionX + (c+1)*(world->positionY+20),RW_SEEK_CUR);
   for(int i = 0;i<21;i++){
     if (i<20){
      for(int j = 0;j<21;j++){
@@ -111,13 +112,14 @@ void deplacerBas(world_t *world){
     }
    }
    SDL_RWclose(fichier);
-   world->positionY = world->positionY+1;
 }
 void deplacerDroite(world_t *world){
-  SDL_RWops* fichier = SDL_RWFromFile("Map.txt","r");
-  int taille_fichier = 0,c = nb_colonne("Map.txt"),l = nb_ligne("Map.txt");
+  SDL_RWops* fichier = SDL_RWFromFile(world->fichier,"r");
+  int taille_fichier = 0,c = nb_colonne(world),l = nb_ligne(world);
   char caractere;
+  world->positionX = world->positionX+1; 
   SDL_RWseek(fichier,0,RW_SEEK_SET);
+  SDL_RWseek(fichier,world->positionX+20+(c+1)*(world->positionY),RW_SEEK_CUR);
   for(int i = 0;i<21;i++){
      for(int j = 0;j<21;j++){
        if (j<20){
@@ -126,18 +128,17 @@ void deplacerDroite(world_t *world){
        else{
 	 SDL_RWread(fichier,&caractere,1,1);
 	 world->tab[j][i] = caractere;
-	 SDL_RWseek(fichier,0,RW_SEEK_CUR);
+	 SDL_RWseek(fichier,c,RW_SEEK_CUR);
        } 
      }
    }
-   SDL_RWclose(fichier);
-   world->positionX = world->positionX+1;
+   SDL_RWclose(fichier);; 
 }
 
-void init_tab_map(const char* nomFichier,world_t *world){
+void init_tab_map(world_t *world){
   
-  SDL_RWops* fichier = SDL_RWFromFile(nomFichier,"r");
-  int taille_fichier = 0,c = nb_colonne(nomFichier),l = nb_ligne(nomFichier);
+  SDL_RWops* fichier = SDL_RWFromFile(world->fichier,"r");
+  int taille_fichier = 0,c = nb_colonne(world),l = nb_ligne(world);
   char caractere;
   SDL_RWseek(fichier,0,RW_SEEK_SET);
   SDL_RWseek(fichier,world->positionX + (c+1)*world->positionY,RW_SEEK_CUR);
@@ -169,7 +170,7 @@ int conv_char_en_entier(char s){
 void afficher_jeu(world_t *world){
   SDL_Texture *bitmapTex;
   SDL_Surface *bitmapSurface;
-  SDL_Rect SrcR,DestR,SrcR2,DestR2;;
+  SDL_Rect SrcR,DestR,SrcR2,DestR2;
 
   bitmapSurface = SDL_LoadBMP("pavage.bmp");   
   bitmapTex = SDL_CreateTextureFromSurface(world->renderer, bitmapSurface);
@@ -186,7 +187,7 @@ void afficher_jeu(world_t *world){
       DestR.y = 40*j;
       DestR.w = 40;
       DestR.h = 40;
-      
+
       SDL_RenderCopy(world->renderer, bitmapTex,&SrcR,&DestR);
     }
   }
@@ -211,5 +212,6 @@ void afficher_jeu(world_t *world){
   SDL_RenderCopy(world->renderer, bitmapTex,&SrcR2,&DestR2);
   SDL_RenderPresent(world->renderer);
 }
+
 
 
