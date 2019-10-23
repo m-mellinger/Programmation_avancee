@@ -61,7 +61,7 @@ void deplacerHaut(world_t *world){
     }
     else{
       for(int j = 0;j<21;j++){
-       SDL_RWread(fichier,&caractere,6,1);
+       SDL_RWread(fichier,&caractere,6,6);
        printf("%c",caractere);
        world->tab[j][i] = caractere;
      }
