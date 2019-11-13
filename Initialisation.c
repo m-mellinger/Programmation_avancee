@@ -12,6 +12,12 @@ void init_data(world_t *world){
   
   world->positionPersoX = world->positionX+10;
   world->positionPersoY = world->positionY+10;
+
+  world->groupe1.posX_maleAlpha = 30;
+  world->groupe1.posY_maleAlpha = 30;
+  world->groupe2.posX_maleAlpha = 120;
+  world->groupe2.posY_maleAlpha = 120;
+  
   
   sprintf(world->fichier, "Map.txt");
   
