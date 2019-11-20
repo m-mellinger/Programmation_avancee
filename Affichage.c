@@ -62,7 +62,6 @@ void deplacerHaut(world_t *world){
     else{
       for(int j = 0;j<21;j++){
        SDL_RWread(fichier,&caractere,1,1);
-       printf("%c",caractere);
        world->tab[j][i] = caractere;
      }
     }
@@ -133,7 +132,7 @@ void deplacerDroite(world_t *world){
        } 
      }
    }
-   SDL_RWclose(fichier);; 
+   SDL_RWclose(fichier);
 }
 
 void init_tab_map(world_t *world){
@@ -168,6 +167,34 @@ int conv_char_en_entier(char s){
   return retour;
 }
 
+void deplacementAuto(world_t *world,liste *l){
+
+  while(l->premier->suivant != NULL){
+
+    if (l->premier->suivant->noeud.x < l->premier->noeud.x ){ 
+      deplacerGauche(world);
+      afficher_jeu(world);
+    }
+    else if (l->premier->suivant->noeud.x > l->premier->noeud.x){
+      deplacerDroite(world);
+      afficher_jeu(world);
+
+      }
+    else if (l->premier->suivant->noeud.y > l->premier->noeud.y){
+      deplacerBas(world);
+      afficher_jeu(world);
+ 
+      }
+    if (l->premier->suivant->noeud.y < l->premier->noeud.y){
+      deplacerHaut(world);
+      afficher_jeu(world);
+    }
+    
+    SDL_Delay(500);
+    supprimer(l,l->premier->noeud);
+    }
+}
+
 void afficher_jeu(world_t *world){
   SDL_Texture *bitmapTex;
   SDL_Surface *bitmapSurface;
@@ -183,7 +210,7 @@ void afficher_jeu(world_t *world){
       SrcR.y = 0;
       SrcR.w = 32; 
       SrcR.h = 32;
-      
+ 
       DestR.x = 40*i;
       DestR.y = 40*j;
       DestR.w = 40;

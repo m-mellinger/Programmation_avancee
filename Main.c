@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 #include "Affichage.h"
 
 int main(int argc, char *argv[])
@@ -51,6 +52,13 @@ int main(int argc, char *argv[])
 	      case SDLK_a:
 		terminer = true; break;
 	      }
+	  case SDL_MOUSEBUTTONDOWN:{
+	    int x = floor(evenements.button.x/40);
+	    int y = floor(evenements.button.y/40);
+	    if ( x >= 0  && x <=21 && y >= 0 && y <=21 && world.tab[x][y] != '1') {       
+	      deplacementAuto(&world,recherche_chemin(world.tab,10,10,x,y ));
+	    }
+	  }
 	  }
     }
   SDL_DestroyWindow(world.fenetre);

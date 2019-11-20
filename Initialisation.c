@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "Initialisation.h"
+#include "Affichage.h"
+
 
 void init_data(world_t *world){
   world->fenetre = SDL_CreateWindow("Fenetre SDL", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,SCREEN_WIDTH ,SCREEN_HEIGHT, 0);
