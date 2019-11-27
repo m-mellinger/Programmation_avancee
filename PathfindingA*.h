@@ -1,7 +1,4 @@
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
+#include "Initialisation.h"
 
 typedef struct noeud_s noeud_t;
 typedef struct l_noeud_s l_noeud;
@@ -32,7 +29,7 @@ void ajouter_liste(liste *l,noeud_t n);
 void afficher(liste *l);
 void supprimer(liste *l, noeud_t n);
 bool deja_present_liste(liste *l,noeud_t n);
-void ajouter_cases_adj(liste *lF ,liste *lO,char map[21][21],l_noeud *n,noeud_t nA);
-liste* recherche_chemin(char map[21][21], int departX, int departY ,int  arriveeX , int arriveeY);
+void ajouter_cases_adj(liste *lF ,liste *lO,case_t map[21][21],l_noeud *n,noeud_t nA);
+liste* recherche_chemin(case_t map[21][21], int departX, int departY ,int  arriveeX , int arriveeY);
 liste* liste_chemin_trouver(liste *l);
 void ajouter_debut_liste(liste *l,noeud_t n);

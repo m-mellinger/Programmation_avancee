@@ -1,7 +1,13 @@
+#include <SDL2/SDL.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
 
 #define SCREEN_WIDTH 840
-#define SCREEN_HEIGHT 924
-#define PLAYSCREEN_HEIGHT 840
+#define PLAYSCREEN_HEIGHT 735
+#define SCREEN_HEIGHT PLAYSCREEN_HEIGHT+0.1*PLAYSCREEN_HEIGHT
 #define NB_MONSTRE 3
 
 
@@ -20,16 +26,31 @@ struct groupeMonstre_s{
 };
 typedef struct groupeMonstre_s groupeMonstre_t;
 
+struct personnage_s{
+  int positionX; // position du personnage dans le monde
+  int positionY;
+  int vie;
+};
+typedef struct personnage_s personnage_t;
+
+struct case_s{
+  int accessible;
+  int background;
+  int obstacle;
+  int typeObstacle;
+  int monstre;
+  int typeMonstre;
+};
+typedef struct case_s case_t;
 
 struct world_s{
   int positionX; // position dans le fichier txt
   int positionY;
   SDL_Window* fenetre;
   SDL_Renderer* renderer;
-  char tab[SCREEN_HEIGHT/40][SCREEN_WIDTH/40];
-  int positionPersoX; // position du personnage dans le monde
-  int positionPersoY;
+  case_t tab[21][21];
   char fichier[200];
+  personnage_t personnage;
   groupeMonstre_t groupe1;
   groupeMonstre_t groupe2;
 };

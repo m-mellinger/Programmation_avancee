@@ -11,8 +11,9 @@ void init_data(world_t *world){
   world->positionX = 0;
   world->positionY = 0;
   
-  world->positionPersoX = world->positionX+10;
-  world->positionPersoY = world->positionY+10;
+  world->personnage.positionX = world->positionX+10;
+  world->personnage.positionY = world->positionY+10;
+  world->personnage.vie = 100; 
 
   world->groupe1.posX_maleAlpha = 30;
   world->groupe1.posY_maleAlpha = 30;

@@ -98,13 +98,13 @@ bool deja_present_liste(liste *l,noeud_t n){
   return false;
 }
 
-void ajouter_cases_adj(liste *lF ,liste *lO,char map[21][21],l_noeud *n,noeud_t nA){
+void ajouter_cases_adj(liste *lF ,liste *lO,case_t map[21][21],l_noeud *n,noeud_t nA){
 
   noeud_t *tmp = malloc(sizeof(noeud_t));
   noeud_t *etud = malloc(sizeof(noeud_t));
   for (int i = n->noeud.x-1;i <= n->noeud.x+1;i++){
     for (int j = n->noeud.y-1;j <= n->noeud.y+1;j++){
-      if ( map[i][j] != '1' && (((i == n->noeud.x-1 || i ==n->noeud.x+1) && j == n->noeud.y )||((j == n->noeud.y-1 || j ==n->noeud.y+1) && i == n->noeud.x))){ // ne prend pas en compte le noeud actuel pour ne pas boucler ,quand il y a un obstacle sur la map et les diagonales
+      if ( map[i][j].accessible == 0 && (((i == n->noeud.x-1 || i ==n->noeud.x+1) && j == n->noeud.y )||((j == n->noeud.y-1 || j ==n->noeud.y+1) && i == n->noeud.x))){ // ne prend pas en compte le noeud actuel pour ne pas boucler ,quand il y a un obstacle sur la map et les diagonales
     	 etud->x = i;
 	 etud->y = j;
 	 
@@ -149,7 +149,7 @@ liste* liste_chemin_trouver(liste *l){
   return listeF;
 }
 
-liste* recherche_chemin(char map[21][21], int departX, int departY ,int  arriveeX , int arriveeY){
+liste* recherche_chemin(case_t map[21][21], int departX, int departY ,int  arriveeX , int arriveeY){
   noeud_t nArrivee;
   
   liste *liste_ouverte, *liste_fermee,*liste_finalle;
