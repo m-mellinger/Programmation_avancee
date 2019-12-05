@@ -50,7 +50,9 @@ int main(int argc, char *argv[])
 		break;
 
 	      case SDLK_a:
-		terminer = true; break;
+	        
+		terminer = true;
+		break;
 	      }
 	  case SDL_MOUSEBUTTONDOWN:{
 	    int x = floor(evenements.button.x/(SCREEN_WIDTH/21));
@@ -61,6 +63,7 @@ int main(int argc, char *argv[])
 	  }
 	  }
     }
+  libererWorld(&world);
   SDL_DestroyWindow(world.fenetre);
   SDL_Quit();
 
